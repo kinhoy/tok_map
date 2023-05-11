@@ -1,0 +1,167 @@
+<html>
+<head>
+    <title>塞尔达传说：王国之泪</title>
+    <link rel="shortcut icon" href="./libs/logo.png">
+    <link rel="apple-touch-icon" href="./libs/logo.png" />
+    <link rel="apple-touch-icon-precomposed" href="./libs/logo.png">
+    <link href="./libs/leaflet/leaflet.css" rel="stylesheet" />
+    <script src="./libs/leaflet/leaflet-src.js"></script>
+    <script src="./libs/jquery-2.2.0.min.js"></script>
+</head>
+
+<body>
+    <div id="switchType">
+        <span>切换地图</span>
+        <ul></ul>
+    </div>
+    <div id="mapContainer"></div>
+    <a href="https://github.com/kinhoy" target="_blank">
+        <i class="logo"></i>
+    </a>
+</body>
+<script>
+    $(function () {
+        var bounds = new L.LatLngBounds(
+            new L.LatLng(0.00000000, 0.00000000), new L.LatLng(-120.0000000, 150.0000000)
+        );
+        var map = L.map('mapContainer', {
+            crs: L.CRS.Simple,
+            attributionControl: false,
+            maxBounds: bounds,
+            maxBoundsViscosity: 1.0,
+        }).setView([-55, 61], 2);
+        var layer = L.tileLayer('mainland_map/{z}/{x}/{y}.png', {
+            attribution: '&copy; HQH',
+            minZoom: 2,
+            maxZoom: 8,
+            noWrap: true,
+            bounds: bounds
+        }).addTo(map);
+        var popup1 = L.popup();
+        function onMapClick(e) {
+            console.log(e.latlng)
+            popup1
+                .setLatLng(e.latlng)
+                .setContent("此坐标为 x:" + e.latlng.lng.toString() + " y:" + e.latlng.lat.toString())
+                .openOn(map);
+        }
+        map.on('click', onMapClick);
+
+        var listContainer = $("#switchType ul");
+        $("<li>").attr("data-type", "1").text("大陆").appendTo(listContainer);
+        $("<li>").attr("data-type", "2").text("天空").appendTo(listContainer);
+        $("<li>").attr("data-type", "3").text("地底").appendTo(listContainer);
+        $("#switchType li").click(function () {
+            console.log($(this).attr("data-type"))
+            var map_type = $(this).attr("data-type")
+            switch (map_type) {
+                case '1':
+                    console.log('切换大陆地图');
+                    layer = L.tileLayer('mainland_map/{z}/{x}/{y}.png', {
+                        attribution: '&copy; HQH',
+                        minZoom: 2,
+                        maxZoom: 8,
+                        noWrap: true,
+                        bounds: bounds
+                    }).addTo(map);
+                    break;
+                case '2':
+                    console.log('切换天空地图');
+                    layer = L.tileLayer('skyland_map/{z}/{x}/{y}.png', {
+                        attribution: '&copy; HQH',
+                        minZoom: 2,
+                        maxZoom: 8,
+                        noWrap: true,
+                        bounds: bounds
+                    }).addTo(map);
+                    break;
+                case '3':
+                    console.log('切换地底地图');
+                    layer = L.tileLayer('underground_map/{z}/{x}/{y}.png', {
+                        attribution: '&copy; HQH',
+                        minZoom: 2,
+                        maxZoom: 8,
+                        noWrap: true,
+                        bounds: bounds
+                    }).addTo(map);
+                    break;
+                default:
+                    console.log('failed');
+            }
+        });
+    });
+</script>
+
+<style type="text/css">
+    #mapContainer {
+        width: 100%;
+        height: 100%;
+    }
+
+    .logo {
+        display: inline-block;
+        width: 140px;
+        height: 110px;
+        background: url('./libs/logo.png') no-repeat center;
+        background-size: 100% 100%;
+        position: fixed;
+        left: 10px;
+        bottom: 10px;
+        z-index: 9999;
+        cursor: pointer;
+        transition: all .5s ease-in-out;
+    }
+
+    #switchType {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 999;
+    }
+
+    #switchType span {
+        font-size: 12px;
+        background: #C0C2A8;
+        display: block;
+        line-height: 30px;
+        padding: 0 20px;
+        border-radius: 5px;
+        color: #000000;
+        cursor: pointer;
+    }
+
+    #switchType>ul {
+        border-radius: 5px;
+        background-color: rgba(0, 0, 0, 0.8);
+        overflow: hidden;
+        max-height: 0px;
+        transition: all ease-in 0.5s;
+        margin: 0;
+        padding: 0;
+        box-shadow: 1px 1px 0 #03C03C, -1px -1px 0 #03C03C;
+    }
+
+    #switchType>ul>li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-size: 12px;
+        display: block;
+        line-height: 26px;
+        padding: 0 20px;
+        color: #C0C2A8;
+        cursor: pointer;
+        transition: all ease-in 0.2s;
+        background-color: transparent;
+        position: relative;
+    }
+
+    #switchType>ul>li:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    #switchType:hover ul {
+        max-height: 1000px;
+    }
+</style>
+</html>
